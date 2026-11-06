@@ -1,0 +1,896 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeviSree Placement Portal</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.sidebar {
+    width: 245px;
+    height: 100vh;
+    position: fixed;
+    background: #172554;
+    color: white;
+    padding: 25px 16px;
+}
+
+.brand {
+    font-size: 21px;
+    font-weight: bold;
+    padding: 10px 8px 30px;
+    line-height: 1.5;
+}
+
+.brand span {
+    color: #60a5fa;
+}
+
+.nav button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: #cbd5e1;
+    padding: 14px;
+    border: 0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.nav button:hover, .nav button.active {
+    background: #2563eb;
+    color: white;
+}
+
+.main {
+    margin-left: 245px;
+    padding: 30px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 12px;
+}
+
+.topbar h1 {
+    color: #172554;
+    font-size: 27px;
+}
+
+.admin {
+    background: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #1d4ed8;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-bottom: 22px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.stat {
+    background: white;
+    padding: 23px;
+    border-radius: 13px;
+    border-left: 5px solid #3b82f6;
+    box-shadow: 0 3px 12px #0000000a;
+}
+
+.stat:nth-child(2) { border-color: #8b5cf6; }
+.stat:nth-child(3) { border-color: #06b6d4; }
+.stat:nth-child(4) { border-color: #10b981; }
+
+.stat p {
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.stat h2 {
+    font-size: 30px;
+    color: #172554;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 13px;
+    margin-bottom: 24px;
+    box-shadow: 0 3px 12px #0000000a;
+}
+
+.card h2 {
+    font-size: 20px;
+    color: #172554;
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.field label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+}
+
+input:focus, select:focus {
+    outline: 2px solid #bfdbfe;
+    border-color: #3b82f6;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+.primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.primary:hover {
+    background: #1d4ed8;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+th, td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: 13px;
+}
+
+th {
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+tr:hover td {
+    background: #f8fafc;
+}
+
+.status {
+    padding: 6px 10px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status.Selected {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status.Rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status.In-Progress {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.action-btn {
+    background: #0891b2;
+    color: white;
+    border: 0;
+    padding: 8px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#toast {
+    position: fixed;
+    right: 25px;
+    top: 20px;
+    padding: 15px 22px;
+    color: white;
+    border-radius: 8px;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 4px 15px #0003;
+}
+
+#toast.show {
+    display: block;
+}
+
+#toast.success { background: #16a34a; }
+#toast.error { background: #dc2626; }
+
+@media(max-width: 900px) {
+    .sidebar {
+        width: 190px;
+    }
+    .main {
+        margin-left: 190px;
+        padding: 20px;
+    }
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 600px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+    .nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .main {
+        margin-left: 0;
+        padding: 15px;
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    .topbar h1 {
+        font-size: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="toast"></div>
+
+<aside class="sidebar">
+   <div class="brand">DeviSree <span>PLACEMENT PORTAL</span></div>
+
+    <div class="nav">
+        <button class="active" onclick="showPage('dashboard',this)">▦ Dashboard</button>
+        <button onclick="showPage('students',this)">♙ Students</button>
+        <button onclick="showPage('companies',this)">▣ Companies</button>
+        <button onclick="showPage('apply',this)">✉ Apply for Jobs</button>
+        <button onclick="showPage('tracking',this)">◷ Placement Tracking</button>
+    </div>
+</aside>
+
+<main class="main">
+
+<div class="topbar">
+    <h1 id="pageTitle">DeviSree Placement Portal</h1>
+    <div class="admin">Administrator</div>
+</div>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+    <p class="subtitle">Welcome to the College Placement Management System.</p>
+
+    <div class="stats">
+        <div class="stat">
+            <p>Total Students</p>
+            <h2 id="totalStudents">0</h2>
+        </div>
+        <div class="stat">
+            <p>Registered Companies</p>
+            <h2 id="totalCompanies">0</h2>
+        </div>
+        <div class="stat">
+            <p>Total Applications</p>
+            <h2 id="totalApplications">0</h2>
+        </div>
+        <div class="stat">
+            <p>Selected Students</p>
+            <h2 id="totalSelected">0</h2>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Recent Placement Applications</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Company</th>
+                        <th>Job Role</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentTable"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- STUDENTS -->
+<section id="students" class="page">
+    <p class="subtitle">Welcome to DeviSree Placement Portal – Your Gateway to Career Opportunities.</p>
+    <p class="subtitle">Register and manage student placement information.</p>
+
+    <div class="card">
+        <h2>Register New Student</h2>
+
+        <form id="studentForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Student Name</label>
+                    <input id="sname" required placeholder="Enter student name">
+                </div>
+
+                <div class="field">
+                    <label>Roll Number</label>
+                    <input id="roll" required placeholder="Enter roll number">
+                </div>
+
+                <div class="field">
+                    <label>Branch</label>
+                    <select id="branch" required>
+                        <option value="">Select Branch</option>
+                        <option>CSE</option>
+                        <option>ECE</option>
+                        <option>EEE</option>
+                        <option>IT</option>
+                        <option>MECH</option>
+                        <option>CIVIL</option>
+                        <option>AI & ML</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>CGPA</label>
+                    <input type="number" id="cgpa" min="0" max="10" step="0.01" required placeholder="Example: 8.50">
+                </div>
+
+                <div class="field full">
+                    <label>Email Address</label>
+                    <input type="email" id="email" required placeholder="Enter email">
+                </div>
+            </div>
+
+            <button class="primary" type="submit">Register Student</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Student Records</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Roll Number</th>
+                        <th>Branch</th>
+                        <th>CGPA</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTable"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- COMPANIES -->
+<section id="companies" class="page">
+    <p class="subtitle">Administrator can register companies and recruitment drives.</p>
+
+    <div class="card">
+        <h2>Register Company / Recruitment Drive</h2>
+
+        <form id="companyForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Company Name</label>
+                    <input id="cname" required placeholder="Enter company name">
+                </div>
+
+                <div class="field">
+                    <label>Job Role</label>
+                    <input id="role" required placeholder="Example: Software Developer">
+                </div>
+
+                <div class="field">
+                    <label>Package (LPA)</label>
+                    <input type="number" id="package" min="0.01" step="0.01" required placeholder="Example: 6.00">
+                </div>
+
+                <div class="field">
+                    <label>Eligibility CGPA</label>
+                    <input type="number" id="eligibility" min="0" max="10" step="0.01" required placeholder="Example: 7.00">
+                </div>
+
+                <div class="field full">
+                    <label>Drive Date</label>
+                    <input type="date" id="driveDate" required>
+                </div>
+            </div>
+
+            <button class="primary" type="submit">Register Company</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Registered Companies</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Company</th>
+                        <th>Job Role</th>
+                        <th>Package (LPA)</th>
+                        <th>Required CGPA</th>
+                        <th>Drive Date</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesTable"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- APPLY -->
+<section id="apply" class="page">
+    <p class="subtitle">Students can apply for jobs based on their CGPA eligibility.</p>
+
+    <div class="card">
+        <h2>Apply for Recruitment Drive</h2>
+
+        <form id="applicationForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Select Student</label>
+                    <select id="studentSelect" required>
+                        <option value="">Select Student</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Select Company / Job</label>
+                    <select id="companySelect" required>
+                        <option value="">Select Company</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="primary" type="submit">Submit Application</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Available Recruitment Drives</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Job Role</th>
+                        <th>Package (LPA)</th>
+                        <th>Minimum CGPA</th>
+                        <th>Drive Date</th>
+                    </tr>
+                </thead>
+                <tbody id="jobsTable"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- TRACKING -->
+<section id="tracking" class="page">
+    <p class="subtitle">View applications and update placement rounds and status.</p>
+
+    <div class="card">
+        <h2>Placement Application Tracking</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Roll No</th>
+                        <th>Company</th>
+                        <th>Job Role</th>
+                        <th>Round</th>
+                        <th>Status</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsTable"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function toast(message, type = "success") {
+    const t = $("toast");
+    t.textContent = message;
+    t.className = "show " + type;
+    setTimeout(() => t.className = "", 3500);
+}
+
+async function request(url, options = {}) {
+    const response = await fetch(url, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || "Request failed");
+    }
+
+    return data;
+}
+
+function showPage(page, button) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    $(page).classList.add("active");
+
+    document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+
+    const titles = {
+        dashboard: "Dashboard",
+        students: "Student Management",
+        companies: "Company Management",
+        apply: "Job Applications",
+        tracking: "Placement Tracking"
+    };
+
+    $("pageTitle").textContent = titles[page];
+}
+
+// Dashboard
+async function loadDashboard() {
+    try {
+        const d = await request("/api/dashboard");
+
+        $("totalStudents").textContent = d.students;
+        $("totalCompanies").textContent = d.companies;
+        $("totalApplications").textContent = d.applications;
+        $("totalSelected").textContent = d.selected;
+
+        const apps = await request("/api/applications");
+        $("recentTable").innerHTML = "";
+
+        if (!apps.length) {
+            $("recentTable").innerHTML = '<tr><td colspan="4">No applications yet</td></tr>';
+        }
+
+        apps.slice(0, 5).forEach(a => {
+            const tr = document.createElement("tr");
+            [a.student_name, a.company_name, a.job_role].forEach(v => {
+                const td = document.createElement("td");
+                td.textContent = v;
+                tr.appendChild(td);
+            });
+
+            const td = document.createElement("td");
+            const span = document.createElement("span");
+            span.className = "status " + a.status.replace(" ", "-");
+            span.textContent = a.status;
+            td.appendChild(span);
+            tr.appendChild(td);
+            $("recentTable").appendChild(tr);
+        });
+    } catch (err) {
+        toast(err.message, "error");
+    }
+}
+
+// Students
+async function loadStudents() {
+    const students = await request("/api/students");
+
+    $("studentsTable").innerHTML = "";
+    $("studentSelect").innerHTML = '<option value="">Select Student</option>';
+
+    students.forEach(s => {
+        const tr = document.createElement("tr");
+
+        [s.student_id, s.name, s.roll_no, s.branch, s.cgpa, s.email].forEach(v => {
+            const td = document.createElement("td");
+            td.textContent = v;
+            tr.appendChild(td);
+        });
+
+        $("studentsTable").appendChild(tr);
+
+        const option = document.createElement("option");
+        option.value = s.student_id;
+        option.textContent = `${s.name} (${s.roll_no}) - CGPA ${s.cgpa}`;
+        $("studentSelect").appendChild(option);
+    });
+}
+
+$("studentForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    try {
+        await request("/api/students", {
+            method: "POST",
+            body: JSON.stringify({
+                name: $("sname").value.trim(),
+                roll_no: $("roll").value.trim(),
+                branch: $("branch").value,
+                cgpa: $("cgpa").value,
+                email: $("email").value.trim()
+            })
+        });
+
+        toast("Student registered successfully!");
+        e.target.reset();
+        await loadStudents();
+        await loadDashboard();
+    } catch (err) {
+        toast(err.message, "error");
+    }
+});
+
+// Companies
+async function loadCompanies() {
+    const companies = await request("/api/companies");
+
+    $("companiesTable").innerHTML = "";
+    $("jobsTable").innerHTML = "";
+    $("companySelect").innerHTML = '<option value="">Select Company</option>';
+
+    companies.forEach(c => {
+        const tr = document.createElement("tr");
+
+        [
+            c.company_id, c.company_name, c.job_role,
+            Number(c.package).toFixed(2), c.eligibility_cgpa,
+            String(c.drive_date).slice(0, 10)
+        ].forEach(v => {
+            const td = document.createElement("td");
+            td.textContent = v;
+            tr.appendChild(td);
+        });
+
+        $("companiesTable").appendChild(tr);
+
+        const job = document.createElement("tr");
+        [
+            c.company_name, c.job_role,
+            Number(c.package).toFixed(2), c.eligibility_cgpa,
+            String(c.drive_date).slice(0, 10)
+        ].forEach(v => {
+            const td = document.createElement("td");
+            td.textContent = v;
+            job.appendChild(td);
+        });
+
+        $("jobsTable").appendChild(job);
+
+        const option = document.createElement("option");
+        option.value = c.company_id;
+        option.textContent = `${c.company_name} - ${c.job_role} (${c.package} LPA)`;
+        $("companySelect").appendChild(option);
+    });
+}
+
+$("companyForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    try {
+        await request("/api/companies", {
+            method: "POST",
+            body: JSON.stringify({
+                company_name: $("cname").value.trim(),
+                job_role: $("role").value.trim(),
+                package: $("package").value,
+                eligibility_cgpa: $("eligibility").value,
+                drive_date: $("driveDate").value
+            })
+        });
+
+        toast("Company registered successfully!");
+        e.target.reset();
+        await loadCompanies();
+        await loadDashboard();
+    } catch (err) {
+        toast(err.message, "error");
+    }
+});
+
+// Apply for job
+$("applicationForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    try {
+        const result = await request("/api/applications", {
+            method: "POST",
+            body: JSON.stringify({
+                student_id: $("studentSelect").value,
+                company_id: $("companySelect").value
+            })
+        });
+
+        toast(result.message);
+        e.target.reset();
+
+        await loadApplications();
+        await loadDashboard();
+    } catch (err) {
+        toast(err.message, "error");
+    }
+});
+
+// Placement tracking
+async function loadApplications() {
+    const applications = await request("/api/applications");
+    $("applicationsTable").innerHTML = "";
+
+    if (!applications.length) {
+        $("applicationsTable").innerHTML =
+            '<tr><td colspan="8">No applications found</td></tr>';
+        return;
+    }
+
+    applications.forEach(a => {
+        const tr = document.createElement("tr");
+
+        [
+            a.application_id, a.student_name, a.roll_no,
+            a.company_name, a.job_role
+        ].forEach(v => {
+            const td = document.createElement("td");
+            td.textContent = v;
+            tr.appendChild(td);
+        });
+
+        const roundCell = document.createElement("td");
+        const roundSelect = document.createElement("select");
+
+        ["Applied", "Aptitude Test", "Technical Interview", "HR Interview", "Final Round"]
+            .forEach(r => {
+                const option = document.createElement("option");
+                option.value = r;
+                option.textContent = r;
+                if (r === a.round) option.selected = true;
+                roundSelect.appendChild(option);
+            });
+
+        roundCell.appendChild(roundSelect);
+        tr.appendChild(roundCell);
+
+        const statusCell = document.createElement("td");
+        const statusSelect = document.createElement("select");
+
+        ["Applied", "In Progress", "Selected", "Rejected"].forEach(s => {
+            const option = document.createElement("option");
+            option.value = s;
+            option.textContent = s;
+            if (s === a.status) option.selected = true;
+            statusSelect.appendChild(option);
+        });
+
+        statusCell.appendChild(statusSelect);
+        tr.appendChild(statusCell);
+
+        const actionCell = document.createElement("td");
+        const button = document.createElement("button");
+        button.className = "action-btn";
+        button.textContent = "Save";
+
+        button.addEventListener("click", async () => {
+            try {
+                await request(`/api/applications/${a.application_id}`, {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        round: roundSelect.value,
+                        status: statusSelect.value
+                    })
+                });
+
+                toast("Placement status updated!");
+                await loadApplications();
+                await loadDashboard();
+            } catch (err) {
+                toast(err.message, "error");
+            }
+        });
+
+        actionCell.appendChild(button);
+        tr.appendChild(actionCell);
+
+        $("applicationsTable").appendChild(tr);
+    });
+}
+
+// Initial load
+async function initialize() {
+    try {
+        await loadStudents();
+        await loadCompanies();
+        await loadApplications();
+        await loadDashboard();
+    } catch (err) {
+        toast(err.message, "error");
+    }
+}
+
+initialize();
+</script>
+
+</body>
+</html>
